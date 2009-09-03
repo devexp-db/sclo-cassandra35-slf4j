@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.5.8
-Release:        4%{?dist}
+Release:        5%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -137,6 +137,7 @@ mvn-jpp \
         -Dmaven2.jpp.mode=true \
         -Dmaven2.jpp.depmap.file=%{SOURCE2} \
         -Dmaven.repo.local=$MAVEN_REPO_LOCAL \
+        -Dmaven.test.skip=true \
         install javadoc:javadoc
 
 %install
@@ -259,6 +260,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Fri Sep 4 2009 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.8-5
+- Skip tests.
+
 * Wed Sep 2 2009 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.8-4
 - Fix other line lenghts.
 
