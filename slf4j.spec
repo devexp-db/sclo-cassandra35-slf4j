@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.5.10
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -61,6 +61,7 @@ BuildRequires:  maven2-plugin-source
 BuildRequires:  maven-doxia-sitetools
 BuildRequires:  maven-surefire-maven-plugin
 BuildRequires:  maven-surefire-provider-junit
+BuildRequires:  maven-plugin-build-helper
 BuildRequires:  log4j
 BuildRequires:  jakarta-commons-logging
 BuildRequires:  cal10n
@@ -254,7 +255,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files javadoc
 %defattr(-,root,root,-)
-%{_javadocdir}/%{name}-%{version}
+%{_javadocdir}/%{maven-plugin-build-helpername}-%{version}
 %{_javadocdir}/%{name}
 
 %files manual
@@ -262,6 +263,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Wed Feb 10 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.10-3
+- BR maven-plugin-build-helper.
+
 * Wed Feb 10 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.10-2
 - BR cal10n.
 
