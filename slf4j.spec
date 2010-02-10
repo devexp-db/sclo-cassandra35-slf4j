@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.5.10
-Release:        3%{?dist}
+Release:        4%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -255,7 +255,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files javadoc
 %defattr(-,root,root,-)
-%{_javadocdir}/%{maven-plugin-build-helpername}-%{version}
+%{_javadocdir}/%{name}-%{version}
 %{_javadocdir}/%{name}
 
 %files manual
@@ -263,6 +263,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Wed Feb 10 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.10-4
+- Fix javadoc files.
+
 * Wed Feb 10 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.10-3
 - BR maven-plugin-build-helper.
 
