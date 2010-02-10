@@ -29,14 +29,14 @@
 #
 
 Name:           slf4j
-Version:        1.5.8
-Release:        5%{?dist}
+Version:        1.5.10
+Release:        1%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
 License:        MIT
 URL:            http://www.slf4j.org/
-Source0:        http://www.slf4j.org/dist/slf4j-1.5.8.tar.gz
+Source0:        http://www.slf4j.org/dist/%{name}-%{version}.tar.gz
 Source1:        %{name}-settings.xml
 Source2:        %{name}-jpp-depmap.xml
 Source3:        slf4j-component-info.xml
@@ -96,7 +96,7 @@ Manual for %{name}.
 
 %prep
 %setup -q
-%patch0 -p0
+%patch0 -p0  -b .sav
 %patch1 -p1
 find . -name "*.jar" | xargs rm
 cp -p %{SOURCE1} settings.xml
@@ -134,6 +134,7 @@ export MAVEN_REPO_LOCAL=$(pwd)/.m2/repository
 mvn-jpp \
         -e \
         -s $(pwd)/settings.xml \
+        -P skipTests \
         -Dmaven2.jpp.mode=true \
         -Dmaven2.jpp.depmap.file=%{SOURCE2} \
         -Dmaven.repo.local=$MAVEN_REPO_LOCAL \
@@ -260,6 +261,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Wed Feb 10 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.10-1
+- Update to upstream 1.5.10.
+
 * Fri Sep 4 2009 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.8-5
 - Skip tests.
 
