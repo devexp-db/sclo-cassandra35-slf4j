@@ -29,8 +29,8 @@
 #
 
 Name:           slf4j
-Version:        1.5.10
-Release:        5%{?dist}
+Version:        1.5.11
+Release:        1%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -38,8 +38,6 @@ License:        MIT
 URL:            http://www.slf4j.org/
 Source0:        http://www.slf4j.org/dist/%{name}-%{version}.tar.gz
 Source1:        %{name}-settings.xml
-Source2:        %{name}-jpp-depmap.xml
-Source3:        slf4j-component-info.xml
 Patch0:         %{name}-pom_xml.patch
 Patch1:         slf4j-1.5.8-skip-integration-tests.patch
 Requires(post): jpackage-utils >= 0:1.7.5
@@ -139,7 +137,6 @@ mvn-jpp \
         -s $(pwd)/settings.xml \
         -P skipTests \
         -Dmaven2.jpp.mode=true \
-        -Dmaven2.jpp.depmap.file=%{SOURCE2} \
         -Dmaven.repo.local=$MAVEN_REPO_LOCAL \
         -Dmaven.test.skip=true \
         install javadoc:javadoc
@@ -264,6 +261,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Thu Feb 25 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.11-1
+- Update to 1.5.11.
+- Drop depmap and component info files.
+
 * Wed Feb 10 2010 Mary Ellen Foster <mefoster at gmail.com> 0:1.5.10-5
 - Require cal10n
 
