@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.5.11
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -49,19 +49,20 @@ BuildRequires:  ant-junit >= 0:1.6.5
 BuildRequires:  javassist >= 0:3.4
 BuildRequires:  junit >= 0:3.8.2
 BuildRequires:  maven2 >= 2.0.7
-BuildRequires:  maven2-plugin-antrun
-BuildRequires:  maven2-plugin-compiler
-BuildRequires:  maven2-plugin-install
-BuildRequires:  maven2-plugin-jar
-BuildRequires:  maven2-plugin-javadoc
-BuildRequires:  maven2-plugin-resources
-BuildRequires:  maven2-plugin-source
+BuildRequires:  maven-antrun-plugin
+BuildRequires:  maven-compiler-plugin
+BuildRequires:  maven-install-plugin
+BuildRequires:  maven-jar-plugin
+BuildRequires:  maven-javadoc-plugin
+BuildRequires:  maven-resources-plugin
+BuildRequires:  maven-source-plugin
+BuildRequires:  maven-site-plugin
 BuildRequires:  maven-doxia-sitetools
-BuildRequires:  maven-surefire-maven-plugin
+BuildRequires:  maven-surefire-plugin
 BuildRequires:  maven-surefire-provider-junit
 BuildRequires:  maven-plugin-build-helper
 BuildRequires:  log4j
-BuildRequires:  jakarta-commons-logging
+BuildRequires:  apache-commons-logging
 BuildRequires:  cal10n
 Requires:       jpackage-utils
 Requires:       cal10n
@@ -259,6 +260,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Wed Sep 8 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.11-3
+- Add maven-site-pugin BR.
+- Use new package names.
+
 * Wed Sep 8 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.11-2
 - Skip installing tests jar that is no longer produced.
 - Use javadoc aggregate.
