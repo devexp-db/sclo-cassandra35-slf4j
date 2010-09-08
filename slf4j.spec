@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.5.11
-Release:        1%{?dist}
+Release:        2%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -139,7 +139,7 @@ mvn-jpp \
         -Dmaven2.jpp.mode=true \
         -Dmaven.repo.local=$MAVEN_REPO_LOCAL \
         -Dmaven.test.skip=true \
-        install javadoc:javadoc
+        install javadoc:aggregate
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -159,8 +159,6 @@ install -m 644 log4j-over-slf4j/target/log4j-over-slf4j-%{version}.jar \
    $RPM_BUILD_ROOT%{_javadir}/%{name}/log4j-over-slf4j-%{version}.jar
 install -m 644 slf4j-api/target/%{name}-api-%{version}.jar \
    $RPM_BUILD_ROOT%{_javadir}/%{name}/api-%{version}.jar
-install -m 644 slf4j-api/target/%{name}-api-%{version}-tests.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/api-tests-%{version}.jar
 install -m 644 slf4j-ext/target/%{name}-ext-%{version}.jar \
    $RPM_BUILD_ROOT%{_javadir}/%{name}/ext-%{version}.jar
 install -m 644 slf4j-jcl/target/%{name}-jcl-%{version}.jar \
@@ -196,31 +194,31 @@ install -m 644 slf4j-simple/target/%{name}-simple-%{version}.jar \
 # poms
 install -d -m 755 $RPM_BUILD_ROOT%{_datadir}/maven2/poms
 install -pm 644 pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-parent.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-parent.pom
 install -pm 644 jcl104-over-slf4j/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-jcl104-over-slf4j.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-jcl104-over-slf4j.pom
 install -pm 644 jcl-over-slf4j/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-jcl-over-slf4j.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-jcl-over-slf4j.pom
 install -pm 644 jul-to-slf4j/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-jul-to-slf4j.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-jul-to-slf4j.pom
 install -pm 644 log4j-over-slf4j/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-log4j-over-slf4j.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-log4j-over-slf4j.pom
 install -pm 644 slf4j-api/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-api.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-api.pom
 install -pm 644 slf4j-ext/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-ext.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-ext.pom
 install -pm 644 slf4j-jcl/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-jcl.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-jcl.pom
 install -pm 644 slf4j-jdk14/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-jdk14.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-jdk14.pom
 install -pm 644 slf4j-log4j12/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-log4j12.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-log4j12.pom
 install -pm 644 slf4j-migrator/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-migrator.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-migrator.pom
 install -pm 644 slf4j-nop/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-nop.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-nop.pom
 install -pm 644 slf4j-simple/pom.xml \
-    $RPM_BUILD_ROOT%{_datadir}/maven2/poms/JPP.%{name}-simple.pom
+    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-simple.pom
 
 # javadoc
 install -d -m 0755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
@@ -248,7 +246,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_docdir}/%{name}-%{version}
 %doc %{_docdir}/%{name}-%{version}/LICENSE.txt
 %{_javadir}/%{name}
-%{_datadir}/maven2/poms/*
+%{_mavenpomdir}/*
 %{_mavendepmapfragdir}/*
 
 %files javadoc
@@ -261,6 +259,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Wed Sep 8 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.11-2
+- Skip installing tests jar that is no longer produced.
+- Use javadoc aggregate.
+- Use mavenpomdir macro.
+
 * Thu Feb 25 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.11-1
 - Update to 1.5.11.
 - Drop depmap and component info files.
