@@ -29,17 +29,15 @@
 #
 
 Name:           slf4j
-Version:        1.5.11
-Release:        3%{?dist}
+Version:        1.6.1
+Release:        1%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
 License:        MIT
 URL:            http://www.slf4j.org/
 Source0:        http://www.slf4j.org/dist/%{name}-%{version}.tar.gz
-Source1:        %{name}-settings.xml
 Patch0:         %{name}-pom_xml.patch
-Patch1:         slf4j-1.5.8-skip-integration-tests.patch
 Requires(post): jpackage-utils >= 0:1.7.5
 Requires(postun): jpackage-utils >= 0:1.7.5
 BuildRequires:  jpackage-utils >= 0:1.7.5
@@ -68,7 +66,6 @@ Requires:       jpackage-utils
 Requires:       cal10n
 Requires:       java
 BuildArch:      noarch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
 The Simple Logging Facade for Java or (SLF4J) is intended to serve
@@ -85,6 +82,7 @@ API implementation, e.g. Log4jLoggerAdapter or JDK14LoggerAdapter..
 %package javadoc
 Group:          Documentation
 Summary:        Javadoc for %{name}
+Requires:       jpackage-utils
 
 %description javadoc
 API documentation for %{name}.
@@ -99,34 +97,9 @@ Manual for %{name}.
 %prep
 %setup -q
 %patch0 -p0  -b .sav
-%patch1 -p1
 find . -name "*.jar" | xargs rm
-cp -p %{SOURCE1} settings.xml
 
-sed -i -e "s|<url>__JPP_URL_PLACEHOLDER__</url>|<url>file://`pwd`/.m2/repository</url>|g" \
-    settings.xml
-sed -i -e "s|<url>__JAVADIR_PLACEHOLDER__</url>|<url>file://`pwd`/external_repo</url>|g" \
-    settings.xml
-sed -i -e "s|<url>__MAVENREPO_DIR_PLACEHOLDER__</url>|<url>file://`pwd`/.m2/repository</url>|g" \
-    settings.xml
-sed -i -e "s|<url>__MAVENDIR_PLUGIN_PLACEHOLDER__</url>|<url>file:///usr/share/maven2/plugins</url>|g" \
-    settings.xml
-sed -i -e "s|<url>__ECLIPSEDIR_PLUGIN_PLACEHOLDER__</url>|<url>file:///usr/share/eclipse/plugins</url>|g" \
-    settings.xml
-
-mkdir external_repo
-ln -s %{_javadir} external_repo/JPP
-
-export MAVEN_REPO_LOCAL=$(pwd)/.m2/repository
-mkdir -p $MAVEN_REPO_LOCAL/org.slf4j
-ln -sf $(build-classpath maven2/empty-dep) \
-  $MAVEN_REPO_LOCAL/org.slf4j/slf4j-api.jar
-ln -sf $(build-classpath maven2/empty-dep) \
-  $MAVEN_REPO_LOCAL/org.slf4j/slf4j-simple.jar
-ln -sf $(build-classpath maven2/empty-dep) \
-  $MAVEN_REPO_LOCAL/org.slf4j/slf4j-log4j12.jar
-ln -sf $(build-classpath maven2/empty-dep) \
-  $MAVEN_REPO_LOCAL/org.slf4j/slf4j-nop.jar
+sed -i -e "s|ant<|org.apache.ant<|g" integration/pom.xml
 
 %{_bindir}/find -name "*.css" -o -name "*.js" -o -name "*.txt" | \
     %{_bindir}/xargs -t %{__perl} -pi -e 's/\r$//g'
@@ -135,50 +108,38 @@ ln -sf $(build-classpath maven2/empty-dep) \
 export MAVEN_REPO_LOCAL=$(pwd)/.m2/repository
 mvn-jpp \
         -e \
-        -s $(pwd)/settings.xml \
         -P skipTests \
-        -Dmaven2.jpp.mode=true \
         -Dmaven.repo.local=$MAVEN_REPO_LOCAL \
         -Dmaven.test.skip=true \
         install javadoc:aggregate
 
 %install
-rm -rf $RPM_BUILD_ROOT
-
 # jars
 install -d -m 0755 $RPM_BUILD_ROOT%{_javadir}/%{name}
 
-#install -m 644 jcl104-over-slf4j/target/jcl104-over-slf4j-%{version}.jar
-#  $RPM_BUILD_ROOT%{_javadir}/%{name}/jcl104-over-slf4j-%{version}.jar
-ln -sf jcl-over-slf4j-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/jcl104-over-slf4j-%{version}.jar
 install -m 644 jcl-over-slf4j/target/jcl-over-slf4j-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/jcl-over-slf4j-%{version}.jar
+   $RPM_BUILD_ROOT%{_javadir}/%{name}/jcl-over-slf4j.jar
 install -m 644 jul-to-slf4j/target/jul-to-slf4j-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/jul-to-slf4j-%{version}.jar
+   $RPM_BUILD_ROOT%{_javadir}/%{name}/jul-to-slf4j.jar
 install -m 644 log4j-over-slf4j/target/log4j-over-slf4j-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/log4j-over-slf4j-%{version}.jar
+   $RPM_BUILD_ROOT%{_javadir}/%{name}/log4j-over-slf4j.jar
 install -m 644 slf4j-api/target/%{name}-api-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/api-%{version}.jar
+   $RPM_BUILD_ROOT%{_javadir}/%{name}/api.jar
 install -m 644 slf4j-ext/target/%{name}-ext-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/ext-%{version}.jar
+   $RPM_BUILD_ROOT%{_javadir}/%{name}/ext.jar
 install -m 644 slf4j-jcl/target/%{name}-jcl-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/jcl-%{version}.jar
+   $RPM_BUILD_ROOT%{_javadir}/%{name}/jcl.jar
 install -m 644 slf4j-jdk14/target/%{name}-jdk14-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/jdk14-%{version}.jar
+   $RPM_BUILD_ROOT%{_javadir}/%{name}/jdk14.jar
 install -m 644 slf4j-log4j12/target/%{name}-log4j12-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/log4j12-%{version}.jar
+   $RPM_BUILD_ROOT%{_javadir}/%{name}/log4j12.jar
 install -m 644 slf4j-migrator/target/%{name}-migrator-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/migrator-%{version}.jar
+   $RPM_BUILD_ROOT%{_javadir}/%{name}/migrator.jar
 install -m 644 slf4j-nop/target/%{name}-nop-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/nop-%{version}.jar
+   $RPM_BUILD_ROOT%{_javadir}/%{name}/nop.jar
 install -m 644 slf4j-simple/target/%{name}-simple-%{version}.jar \
-   $RPM_BUILD_ROOT%{_javadir}/%{name}/simple-%{version}.jar
+   $RPM_BUILD_ROOT%{_javadir}/%{name}/simple.jar
 
-(cd $RPM_BUILD_ROOT%{_javadir}/%{name} && for jar in *-%{version}*; \
-    do ln -sf ${jar} `echo $jar| sed "s|-%{version}||g"`; done)
-
-%add_to_maven_depmap org.slf4j jcl104-over-slf4j %{version} JPP/slf4j jcl104-over-slf4j
 %add_to_maven_depmap org.slf4j jcl-over-slf4j %{version} JPP/slf4j jcl-over-slf4j
 %add_to_maven_depmap org.slf4j jul-to-slf4j %{version} JPP/slf4j jul-to-slf4j
 %add_to_maven_depmap org.slf4j log4j-over-slf4j %{version} JPP/slf4j log4j-over-slf4j
@@ -193,11 +154,9 @@ install -m 644 slf4j-simple/target/%{name}-simple-%{version}.jar \
 %add_to_maven_depmap org.slf4j %{name}-simple %{version} JPP/slf4j simple
 
 # poms
-install -d -m 755 $RPM_BUILD_ROOT%{_datadir}/maven2/poms
+install -d -m 755 $RPM_BUILD_ROOT%{_mavenpomdir}
 install -pm 644 pom.xml \
     $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-parent.pom
-install -pm 644 jcl104-over-slf4j/pom.xml \
-    $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-jcl104-over-slf4j.pom
 install -pm 644 jcl-over-slf4j/pom.xml \
     $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-jcl-over-slf4j.pom
 install -pm 644 jul-to-slf4j/pom.xml \
@@ -222,9 +181,8 @@ install -pm 644 slf4j-simple/pom.xml \
     $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-simple.pom
 
 # javadoc
-install -d -m 0755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
-cp -pr target/site/api*/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}/
-ln -s %{name}-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{name}
+install -d -m 0755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}
+cp -pr target/site/api*/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}/
 rm -rf target/site/api*
 
 # manual
@@ -233,8 +191,10 @@ rm -f target/site/.htaccess
 cp -pr target/site $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 install -m 644 LICENSE.txt $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 
-%clean
-rm -rf $RPM_BUILD_ROOT
+%pre javadoc
+# workaround for rpm bug, can be removed in F-17
+[ $1 -gt 1 ] && [ -L %{_javadocdir}/%{name} ] && \
+rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 
 %post
 %update_maven_depmap
@@ -252,7 +212,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files javadoc
 %defattr(-,root,root,-)
-%{_javadocdir}/%{name}-%{version}
 %{_javadocdir}/%{name}
 
 %files manual
@@ -260,6 +219,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Tue Jan 25 2011 Alexander Kurtakov <akurtako@redhat.com> 0:1.6.1-1
+- Update to new upstream version.
+- Various guidelines fixes.
+
 * Wed Sep 8 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.5.11-3
 - Add maven-site-pugin BR.
 - Use new package names.

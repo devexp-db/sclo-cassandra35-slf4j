@@ -1,7 +1,7 @@
---- pom.xml.sav	2009-12-03 01:15:37.000000000 +0200
-+++ pom.xml	2010-02-02 22:46:30.664328057 +0200
+--- pom.xml.sav	2010-07-05 23:24:16.000000000 +0300
++++ pom.xml	2011-01-25 22:34:34.761335409 +0200
 @@ -44,7 +44,7 @@
-     <module>jcl104-over-slf4j</module>
+     <module>jcl-over-slf4j</module>
      <module>log4j-over-slf4j</module>
      <module>jul-to-slf4j</module>
 -    <module>integration</module>
@@ -30,7 +30,7 @@
  
        <plugin>
          <groupId>org.apache.maven.plugins</groupId>
-@@ -328,4 +329,4 @@
+@@ -349,4 +350,4 @@
  
  	</distributionManagement>
    
