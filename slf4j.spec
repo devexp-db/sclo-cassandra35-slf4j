@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.6.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -46,7 +46,7 @@ BuildRequires:  ant >= 0:1.6.5
 BuildRequires:  ant-junit >= 0:1.6.5
 BuildRequires:  javassist >= 0:3.4
 BuildRequires:  junit >= 0:3.8.2
-BuildRequires:  maven2 >= 2.0.7
+BuildRequires:  maven
 BuildRequires:  maven-antrun-plugin
 BuildRequires:  maven-compiler-plugin
 BuildRequires:  maven-install-plugin
@@ -105,11 +105,8 @@ sed -i -e "s|ant<|org.apache.ant<|g" integration/pom.xml
     %{_bindir}/xargs -t %{__perl} -pi -e 's/\r$//g'
 
 %build
-export MAVEN_REPO_LOCAL=$(pwd)/.m2/repository
-mvn-jpp \
-        -e \
+mvn-rpmbuild \
         -P skipTests \
-        -Dmaven.repo.local=$MAVEN_REPO_LOCAL \
         -Dmaven.test.skip=true \
         install javadoc:aggregate
 
@@ -203,7 +200,6 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 %update_maven_depmap
 
 %files
-%defattr(-,root,root,-)
 %dir %{_docdir}/%{name}-%{version}
 %doc %{_docdir}/%{name}-%{version}/LICENSE.txt
 %{_javadir}/%{name}
@@ -211,14 +207,15 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 %{_mavendepmapfragdir}/*
 
 %files javadoc
-%defattr(-,root,root,-)
 %{_javadocdir}/%{name}
 
 %files manual
-%defattr(-,root,root,-)
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Wed Jun 8 2011 Alexander Kurtakov <akurtako@redhat.com> 0:1.6.1-3
+- Build with maven 3.x.
+
 * Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.6.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
