@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.6.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -38,6 +38,7 @@ License:        MIT
 URL:            http://www.slf4j.org/
 Source0:        http://www.slf4j.org/dist/%{name}-%{version}.tar.gz
 Patch0:         %{name}-pom_xml.patch
+Patch1:         %{name}-1.6.1-srcencoding.patch
 Requires(post): jpackage-utils >= 0:1.7.5
 Requires(postun): jpackage-utils >= 0:1.7.5
 BuildRequires:  jpackage-utils >= 0:1.7.5
@@ -97,6 +98,7 @@ Manual for %{name}.
 %prep
 %setup -q
 %patch0 -p0  -b .sav
+%patch1 -p1
 find . -name "*.jar" | xargs rm
 
 sed -i -e "s|ant<|org.apache.ant<|g" integration/pom.xml
@@ -188,11 +190,6 @@ rm -f target/site/.htaccess
 cp -pr target/site $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 install -m 644 LICENSE.txt $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 
-%pre javadoc
-# workaround for rpm bug, can be removed in F-17
-[ $1 -gt 1 ] && [ -L %{_javadocdir}/%{name} ] && \
-rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
-
 %post
 %update_maven_depmap
 
@@ -213,6 +210,10 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Fri Jan 13 2012 Ville Skyttä <ville.skytta@iki.fi> - 0:1.6.1-4
+- Specify explicit source encoding to fix build with Java 1.7.
+- Remove no longer needed javadoc dir upgrade hack.
+
 * Wed Jun 8 2011 Alexander Kurtakov <akurtako@redhat.com> 0:1.6.1-3
 - Build with maven 3.x.
 
