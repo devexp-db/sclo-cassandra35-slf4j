@@ -1,0 +1,16 @@
+diff -up slf4j-1.6.1/pom.xml~ slf4j-1.6.1/pom.xml
+--- slf4j-1.6.1/pom.xml~	2012-01-13 20:54:56.336392307 +0200
++++ slf4j-1.6.1/pom.xml	2012-01-13 21:05:50.590098336 +0200
+@@ -145,9 +145,11 @@
+         <configuration>
+         	<aggregate>true</aggregate>
+           <excludePackageNames>org.slf4j.migrator:org.slf4j.migrator.*</excludePackageNames>
++          <detectJavaApiLink>false</detectJavaApiLink>
++          <isOffline>false</isOffline>
+ 					<links>
+ 						<link>
+-							http://java.sun.com/j2se/1.5.0/docs/api
++							/usr/share/javadoc/java
+ 						</link>
+ 					</links>
+           <groups>

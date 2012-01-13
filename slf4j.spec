@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.6.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -39,6 +39,7 @@ URL:            http://www.slf4j.org/
 Source0:        http://www.slf4j.org/dist/%{name}-%{version}.tar.gz
 Patch0:         %{name}-pom_xml.patch
 Patch1:         %{name}-1.6.1-srcencoding.patch
+Patch2:         %{name}-1.6.1-crosslink.patch
 Requires(post): jpackage-utils >= 0:1.7.5
 Requires(postun): jpackage-utils >= 0:1.7.5
 BuildRequires:  jpackage-utils >= 0:1.7.5
@@ -84,6 +85,8 @@ API implementation, e.g. Log4jLoggerAdapter or JDK14LoggerAdapter..
 Group:          Documentation
 Summary:        Javadoc for %{name}
 Requires:       jpackage-utils
+BuildRequires:  java-javadoc
+Requires:       java-javadoc
 
 %description javadoc
 API documentation for %{name}.
@@ -99,6 +102,7 @@ Manual for %{name}.
 %setup -q
 %patch0 -p0  -b .sav
 %patch1 -p1
+%patch2 -p1
 find . -name "*.jar" | xargs rm
 
 sed -i -e "s|ant<|org.apache.ant<|g" integration/pom.xml
@@ -210,6 +214,9 @@ install -m 644 LICENSE.txt $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Fri Jan 13 2012 Ville Skyttä <ville.skytta@iki.fi> - 0:1.6.1-5
+- Crosslink with local JDK API docs.
+
 * Fri Jan 13 2012 Ville Skyttä <ville.skytta@iki.fi> - 0:1.6.1-4
 - Specify explicit source encoding to fix build with Java 1.7.
 - Remove no longer needed javadoc dir upgrade hack.
