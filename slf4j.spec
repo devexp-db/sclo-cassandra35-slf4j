@@ -37,9 +37,6 @@ Group:          Development/Libraries
 License:        MIT
 URL:            http://www.slf4j.org/
 Source0:        http://www.slf4j.org/dist/%{name}-%{version}.tar.gz
-Patch0:         %{name}-pom_xml.patch
-Patch1:         %{name}-1.6.1-srcencoding.patch
-Patch2:         %{name}-1.6.1-crosslink.patch
 Requires(post): jpackage-utils >= 0:1.7.5
 Requires(postun): jpackage-utils >= 0:1.7.5
 BuildRequires:  jpackage-utils >= 0:1.7.5
@@ -100,13 +97,23 @@ Manual for %{name}.
 
 %prep
 %setup -q
-%patch0 -p0  -b .sav
-%patch1 -p1
-%patch2 -p1
 find . -name "*.jar" | xargs rm
 
-sed -i -e "s|ant<|org.apache.ant<|g" integration/pom.xml
+%pom_disable_module integration
+%pom_remove_plugin :maven-source-plugin
 
+# Because of a non-ASCII comment in slf4j-api/src/main/java/org/slf4j/helpers/MessageFormatter.java
+%pom_xpath_inject "pom:project/pom:properties" "
+    <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>"
+
+# Fix javadoc links
+%pom_xpath_remove "pom:links"
+%pom_xpath_inject "pom:plugin[pom:artifactId[text()='maven-javadoc-plugin']]/pom:configuration" "
+    <detectJavaApiLink>false</detectJavaApiLink>
+    <isOffline>false</isOffline>
+    <links><link>/usr/share/javadoc/java</link></links>"
+
+# dos2unix
 %{_bindir}/find -name "*.css" -o -name "*.js" -o -name "*.txt" | \
     %{_bindir}/xargs -t %{__perl} -pi -e 's/\r$//g'
 
