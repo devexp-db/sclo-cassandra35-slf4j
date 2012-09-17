@@ -29,7 +29,7 @@
 #
 
 Name:           slf4j
-Version:        1.7.0
+Version:        1.7.1
 Release:        1%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
@@ -221,6 +221,9 @@ install -m 644 LICENSE.txt $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Mon Sep 17 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.1-1
+- Update to upstream version 1.7.1
+
 * Mon Sep 10 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.0-1
 - Update to upstream version 1.7.0
 
