@@ -29,7 +29,7 @@
 #
 
 Name:           slf4j
-Version:        1.7.1
+Version:        1.7.2
 Release:        1%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
@@ -100,6 +100,7 @@ Manual for %{name}.
 find . -name "*.jar" | xargs rm
 
 %pom_disable_module integration
+%pom_disable_module osgi-over-slf4j
 %pom_remove_plugin :maven-source-plugin
 
 # Because of a non-ASCII comment in slf4j-api/src/main/java/org/slf4j/helpers/MessageFormatter.java
@@ -221,6 +222,9 @@ install -m 644 LICENSE.txt $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Mon Oct 15 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.2-1
+- Update to upstream version 1.7.2
+
 * Mon Sep 17 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.1-1
 - Update to upstream version 1.7.1
 
