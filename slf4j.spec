@@ -30,11 +30,12 @@
 
 Name:           slf4j
 Version:        1.7.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
-License:        MIT
+# the log4j-over-slf4j and jcl-over-slf4j submodules are ASL 2.0, rest is MIT
+License:        MIT and ASL 2.0
 URL:            http://www.slf4j.org/
 Source0:        http://www.slf4j.org/dist/%{name}-%{version}.tar.gz
 Requires(post): jpackage-utils >= 0:1.7.5
@@ -151,19 +152,6 @@ install -m 644 slf4j-nop/target/%{name}-nop-%{version}.jar \
 install -m 644 slf4j-simple/target/%{name}-simple-%{version}.jar \
    $RPM_BUILD_ROOT%{_javadir}/%{name}/simple.jar
 
-%add_to_maven_depmap org.slf4j jcl-over-slf4j %{version} JPP/slf4j jcl-over-slf4j
-%add_to_maven_depmap org.slf4j jul-to-slf4j %{version} JPP/slf4j jul-to-slf4j
-%add_to_maven_depmap org.slf4j log4j-over-slf4j %{version} JPP/slf4j log4j-over-slf4j
-%add_to_maven_depmap org.slf4j %{name}-parent %{version} JPP/slf4j parent
-%add_to_maven_depmap org.slf4j %{name}-api %{version} JPP/slf4j api
-%add_to_maven_depmap org.slf4j %{name}-ext %{version} JPP/slf4j ext
-%add_to_maven_depmap org.slf4j %{name}-jcl %{version} JPP/slf4j jcl
-%add_to_maven_depmap org.slf4j %{name}-jdk14 %{version} JPP/slf4j jdk14
-%add_to_maven_depmap org.slf4j %{name}-log4j12 %{version} JPP/slf4j log4j12
-%add_to_maven_depmap org.slf4j %{name}-migrator %{version} JPP/slf4j migrator
-%add_to_maven_depmap org.slf4j %{name}-nop %{version} JPP/slf4j nop
-%add_to_maven_depmap org.slf4j %{name}-simple %{version} JPP/slf4j simple
-
 # poms
 install -d -m 755 $RPM_BUILD_ROOT%{_mavenpomdir}
 install -pm 644 pom.xml \
@@ -191,6 +179,19 @@ install -pm 644 slf4j-nop/pom.xml \
 install -pm 644 slf4j-simple/pom.xml \
     $RPM_BUILD_ROOT%{_mavenpomdir}/JPP.%{name}-simple.pom
 
+%add_maven_depmap JPP.%{name}-parent.pom
+%add_maven_depmap JPP.%{name}-jcl-over-slf4j.pom %{name}/jcl-over-slf4j.jar
+%add_maven_depmap JPP.%{name}-jul-to-slf4j.pom %{name}/jul-to-slf4j.jar
+%add_maven_depmap JPP.%{name}-log4j-over-slf4j.pom %{name}/log4j-over-slf4j.jar
+%add_maven_depmap JPP.%{name}-api.pom %{name}/api.jar
+%add_maven_depmap JPP.%{name}-ext.pom %{name}/ext.jar
+%add_maven_depmap JPP.%{name}-jcl.pom %{name}/jcl.jar
+%add_maven_depmap JPP.%{name}-jdk14.pom %{name}/jdk14.jar
+%add_maven_depmap JPP.%{name}-log4j12.pom %{name}/log4j12.jar
+%add_maven_depmap JPP.%{name}-migrator.pom %{name}/migrator.jar
+%add_maven_depmap JPP.%{name}-nop.pom %{name}/nop.jar
+%add_maven_depmap JPP.%{name}-simple.pom %{name}/simple.jar
+
 # javadoc
 install -d -m 0755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}
 cp -pr target/site/api*/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}/
@@ -200,20 +201,10 @@ rm -rf target/site/api*
 install -d -m 0755 $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 rm -f target/site/.htaccess
 cp -pr target/site $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
-install -m 644 LICENSE.txt $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 
-%post
-%update_maven_depmap
-
-%postun
-%update_maven_depmap
-
-%files
-%dir %{_docdir}/%{name}-%{version}
-%doc %{_docdir}/%{name}-%{version}/LICENSE.txt
-%{_javadir}/%{name}
-%{_mavenpomdir}/*
-%{_mavendepmapfragdir}/*
+%files -f .mfiles
+%doc LICENSE.txt
+%dir %{_javadir}/%{name}
 
 %files javadoc
 %{_javadocdir}/%{name}
@@ -222,6 +213,12 @@ install -m 644 LICENSE.txt $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Thu Nov 08 2012 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0:1.7.2-2
+- Fix license to ASL 2.0 and MIT
+- Update to add_maven_depmap macro
+- Use generated .mfiles list
+- Small packaging cleanups
+
 * Mon Oct 15 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.2-1
 - Update to upstream version 1.7.2
 
