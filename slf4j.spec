@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.7.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -38,8 +38,6 @@ Group:          Development/Libraries
 License:        MIT and ASL 2.0
 URL:            http://www.slf4j.org/
 Source0:        http://www.slf4j.org/dist/%{name}-%{version}.tar.gz
-Requires(post): jpackage-utils >= 0:1.7.5
-Requires(postun): jpackage-utils >= 0:1.7.5
 BuildRequires:  jpackage-utils >= 0:1.7.5
 BuildRequires:  java-devel >= 0:1.5.0
 BuildRequires:  ant >= 0:1.6.5
@@ -118,6 +116,14 @@ find . -name "*.jar" | xargs rm
 # dos2unix
 %{_bindir}/find -name "*.css" -o -name "*.js" -o -name "*.txt" | \
     %{_bindir}/xargs -t %{__perl} -pi -e 's/\r$//g'
+
+# The general pattern is that the API package exports API classes and does
+# not require impl classes. slf4j was breaking that causing "A cycle was
+# detected when generating the classpath slf4j.api, slf4j.nop, slf4j.api."
+# The API bundle requires impl package, so to avoid cyclic dependencies
+# during build time, it is necessary to mark the imported package as an
+# optional one.
+sed -i "/Import-Package/s/.$/;resolution:=optional&/" slf4j-api/src/main/resources/META-INF/MANIFEST.MF
 
 %build
 mvn-rpmbuild \
@@ -213,6 +219,9 @@ cp -pr target/site $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Thu Nov 15 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.2-3
+- Avoid cyclic OSGi dependencies
+
 * Thu Nov 08 2012 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0:1.7.2-2
 - Fix license to ASL 2.0 and MIT
 - Update to add_maven_depmap macro
