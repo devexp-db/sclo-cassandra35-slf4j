@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.7.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -38,6 +38,7 @@ Group:          Development/Libraries
 License:        MIT and ASL 2.0
 URL:            http://www.slf4j.org/
 Source0:        http://www.slf4j.org/dist/%{name}-%{version}.tar.gz
+Source1:        http://www.apache.org/licenses/LICENSE-2.0.txt
 BuildRequires:  jpackage-utils >= 0:1.7.5
 BuildRequires:  java-devel >= 0:1.5.0
 BuildRequires:  ant >= 0:1.6.5
@@ -97,6 +98,7 @@ Manual for %{name}.
 %prep
 %setup -q
 find . -name "*.jar" | xargs rm
+cp -p %{SOURCE1} APACHE-LICENSE
 
 %pom_disable_module integration
 %pom_disable_module osgi-over-slf4j
@@ -209,16 +211,22 @@ rm -f target/site/.htaccess
 cp -pr target/site $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 
 %files -f .mfiles
-%doc LICENSE.txt
+%doc LICENSE.txt APACHE-LICENSE
 %dir %{_javadir}/%{name}
 
 %files javadoc
+%doc LICENSE.txt APACHE-LICENSE
 %{_javadocdir}/%{name}
 
 %files manual
+%doc LICENSE.txt APACHE-LICENSE
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Wed Nov 21 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.2-4
+- Install Apache license file
+- Resolves: rhbz#878996
+
 * Thu Nov 15 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.2-3
 - Avoid cyclic OSGi dependencies
 
