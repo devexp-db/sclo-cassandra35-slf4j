@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.7.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -39,6 +39,8 @@ License:        MIT and ASL 2.0
 URL:            http://www.slf4j.org/
 Source0:        http://www.slf4j.org/dist/%{name}-%{version}.tar.gz
 Source1:        http://www.apache.org/licenses/LICENSE-2.0.txt
+BuildArch:      noarch
+
 BuildRequires:  jpackage-utils >= 0:1.7.5
 BuildRequires:  java-devel >= 0:1.5.0
 BuildRequires:  ant >= 0:1.6.5
@@ -61,10 +63,6 @@ BuildRequires:  maven-plugin-build-helper
 BuildRequires:  log4j
 BuildRequires:  apache-commons-logging
 BuildRequires:  cal10n
-Requires:       jpackage-utils
-Requires:       cal10n
-Requires:       java
-BuildArch:      noarch
 
 %description
 The Simple Logging Facade for Java or (SLF4J) is intended to serve
@@ -80,20 +78,17 @@ API implementation, e.g. Log4jLoggerAdapter or JDK14LoggerAdapter..
 
 %package javadoc
 Group:          Documentation
-Summary:        Javadoc for %{name}
-Requires:       jpackage-utils
-BuildRequires:  java-javadoc
-Requires:       java-javadoc
+Summary:        API documentation for %{name}
 
 %description javadoc
-API documentation for %{name}.
+This package provides %{summary}.
 
 %package manual
 Group:          Documentation
-Summary:        Documents for %{name}
+Summary:        Manual for %{name}
 
 %description manual
-Manual for %{name}.
+This package provides documentation for %{name}.
 
 %prep
 %setup -q
@@ -125,6 +120,7 @@ cp -p %{SOURCE1} APACHE-LICENSE
 # The API bundle requires impl package, so to avoid cyclic dependencies
 # during build time, it is necessary to mark the imported package as an
 # optional one.
+# Reported upstream: http://bugzilla.slf4j.org/show_bug.cgi?id=283
 sed -i "/Import-Package/s/.$/;resolution:=optional&/" slf4j-api/src/main/resources/META-INF/MANIFEST.MF
 
 %build
@@ -154,6 +150,9 @@ cp -pr target/site $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 %{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Tue Jan  8 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.2-6
+- Rebuild to generate maven provides
+
 * Fri Nov 30 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.2-5
 - Build with xmvn
 
