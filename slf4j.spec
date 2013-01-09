@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.7.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -134,9 +134,9 @@ sed -i "/Import-Package/s/.$/;resolution:=optional&/" slf4j-api/src/main/resourc
     ln -s $jar ${jar/%{name}-/}; done)
 
 # manual
-install -d -m 0755 $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
-rm -f target/site/.htaccess
-cp -pr target/site $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
+install -d -m 0755 $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual-%{version}
+rm -rf target/site/{.htaccess,apidocs}
+cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual-%{version}
 
 %files -f .mfiles
 %doc LICENSE.txt APACHE-LICENSE
@@ -147,9 +147,11 @@ cp -pr target/site $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/
 
 %files manual
 %doc LICENSE.txt APACHE-LICENSE
-%{_docdir}/%{name}-%{version}/site
 
 %changelog
+* Wed Jan  9 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.2-7
+- Fix install location of manual
+
 * Tue Jan  8 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.2-6
 - Rebuild to generate maven provides
 
