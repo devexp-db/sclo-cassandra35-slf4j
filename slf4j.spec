@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.7.5
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -49,16 +49,10 @@ BuildRequires:  javassist >= 0:3.4
 BuildRequires:  junit >= 0:3.8.2
 BuildRequires:  maven-local
 BuildRequires:  maven-antrun-plugin
-BuildRequires:  maven-compiler-plugin
-BuildRequires:  maven-install-plugin
-BuildRequires:  maven-jar-plugin
-BuildRequires:  maven-javadoc-plugin
 BuildRequires:  maven-resources-plugin
 BuildRequires:  maven-source-plugin
 BuildRequires:  maven-site-plugin
 BuildRequires:  maven-doxia-sitetools
-BuildRequires:  maven-surefire-plugin
-BuildRequires:  maven-surefire-provider-junit
 BuildRequires:  maven-plugin-build-helper
 BuildRequires:  log4j
 BuildRequires:  apache-commons-logging
@@ -77,14 +71,12 @@ it is possible (and rather easy) to write SLF4J adapters for the given
 API implementation, e.g. Log4jLoggerAdapter or JDK14LoggerAdapter..
 
 %package javadoc
-Group:          Documentation
 Summary:        API documentation for %{name}
 
 %description javadoc
 This package provides %{summary}.
 
 %package manual
-Group:          Documentation
 Summary:        Manual for %{name}
 
 %description manual
@@ -134,9 +126,9 @@ sed -i "/Import-Package/s/.$/;resolution:=optional&/" slf4j-api/src/main/resourc
     ln -s $jar ${jar/%{name}-/}; done)
 
 # manual
-install -d -m 0755 $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual-%{version}
+install -d -m 0755 $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 rm -rf target/site/{.htaccess,apidocs}
-cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual-%{version}
+cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 
 %files -f .mfiles
 %doc LICENSE.txt APACHE-LICENSE
@@ -149,6 +141,9 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual-%{version}
 %doc LICENSE.txt APACHE-LICENSE
 
 %changelog
+* Tue Aug 06 2013 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0:1.7.5-3
+- Install manual to versionless docdir (#993551)
+
 * Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.7.5-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
