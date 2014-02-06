@@ -29,8 +29,8 @@
 #
 
 Name:           slf4j
-Version:        1.7.5
-Release:        3%{?dist}
+Version:        1.7.6
+Release:        1%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -141,6 +141,9 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %doc LICENSE.txt APACHE-LICENSE
 
 %changelog
+* Thu Feb  6 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.6-1
+- Update to upstream version 1.7.6
+
 * Tue Aug 06 2013 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0:1.7.5-3
 - Install manual to versionless docdir (#993551)
 
