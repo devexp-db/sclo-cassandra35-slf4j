@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.7.6
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -58,6 +58,21 @@ BuildRequires:  log4j
 BuildRequires:  apache-commons-logging
 BuildRequires:  cal10n
 
+# temporarily require subpackages until dependenct packages update their BRs
+Requires:       %{name}-parent = %{version}-%{release}
+Requires:       %{name}-api = %{version}-%{release}
+Requires:       %{name}-simple = %{version}-%{release}
+Requires:       %{name}-nop = %{version}-%{release}
+Requires:       %{name}-jdk14 = %{version}-%{release}
+Requires:       %{name}-log4j12 = %{version}-%{release}
+Requires:       %{name}-jcl = %{version}-%{release}
+Requires:       %{name}-ext = %{version}-%{release}
+Requires:       %{name}-site = %{version}-%{release}
+Requires:       %{name}-migrator = %{version}-%{release}
+Requires:       jcl-over-slf4j = %{version}-%{release}
+Requires:       log4j-over-slf4j = %{version}-%{release}
+Requires:       jul-to-slf4j = %{version}-%{release}
+
 %description
 The Simple Logging Facade for Java or (SLF4J) is intended to serve
 as a simple facade for various logging APIs allowing to the end-user
@@ -81,6 +96,97 @@ Summary:        Manual for %{name}
 
 %description manual
 This package provides documentation for %{name}.
+
+%package parent
+Summary:        Parent POM for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description parent
+Parent POM for %{name}
+
+%package api
+Summary:        API for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description api
+This package provides API for %{name}.
+
+%package simple
+Summary:        simple module for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description simple
+This package provides simple module for %{name}.
+
+%package nop
+Summary:        nop module for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description nop
+This package provides nop module for %{name}.
+
+%package jdk14
+Summary:        jdk14 module for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description jdk14
+This package provides jdk14 module for %{name}.
+
+%package log4j12
+Summary:        log4j12 module for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description log4j12
+This package provides log4j12 module for %{name}.
+
+%package jcl
+Summary:        jcl module for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description jcl
+This package provides jcl module for %{name}.
+
+%package ext
+Summary:        ext module for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description ext
+This package provides ext module for %{name}.
+
+%package -n jcl-over-slf4j
+Summary:        jcl-over-slf4j module for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description -n jcl-over-slf4j
+This package provides jcl-over-slf4j module for %{name}.
+
+%package -n log4j-over-slf4j
+Summary:        log4j-over-slf4j module for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description -n log4j-over-slf4j
+This package provides log4j-over-slf4j module for %{name}.
+
+%package -n jul-to-slf4j
+Summary:        jul-to-slf4j module for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description -n jul-to-slf4j
+This package provides jul-to-slf4j module for %{name}.
+
+%package site
+Summary:        site module for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description site
+This package provides site module for %{name}.
+
+%package migrator
+Summary:        migrator module for %{name}
+Requires:       %{name} = %{version}-%{release}
+
+%description migrator
+This package provides migrator module for %{name}.
 
 %prep
 %setup -q
@@ -120,7 +226,7 @@ cp -p %{SOURCE1} APACHE-LICENSE
 sed -i "/Import-Package/s/.$/;resolution:=optional&/" slf4j-api/src/main/resources/META-INF/MANIFEST.MF
 
 %build
-%mvn_build -f
+%mvn_build -f -s
 
 %install
 %mvn_install
@@ -138,6 +244,19 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %doc LICENSE.txt APACHE-LICENSE
 %{_javadir}/%{name}
 
+%files parent -f .mfiles-%{name}-parent
+%files api -f .mfiles-%{name}-api
+%files simple -f .mfiles-%{name}-simple
+%files nop -f .mfiles-%{name}-nop
+%files jdk14 -f .mfiles-%{name}-jdk14
+%files log4j12 -f .mfiles-%{name}-log4j12
+%files jcl -f .mfiles-%{name}-jcl
+%files ext -f .mfiles-%{name}-ext
+%files -n jcl-over-slf4j -f .mfiles-jcl-over-slf4j
+%files -n log4j-over-slf4j -f .mfiles-log4j-over-slf4j
+%files -n jul-to-slf4j -f .mfiles-jul-to-slf4j
+%files site -f .mfiles-%{name}-site
+%files migrator -f .mfiles-%{name}-migrator
 %files javadoc -f .mfiles-javadoc
 %doc LICENSE.txt APACHE-LICENSE
 
@@ -145,6 +264,9 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %doc LICENSE.txt APACHE-LICENSE
 
 %changelog
+* Fri Mar 07 2014 Michael Simacek <msimacek@redhat.com> - 0:1.7.6-3
+- Split into subpackages
+
 * Thu Mar  6 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.6-2
 - Remove wagon-ssh build extension
 - Disable slf4j-android module
