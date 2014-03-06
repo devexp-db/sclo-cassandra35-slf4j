@@ -89,6 +89,7 @@ cp -p %{SOURCE1} APACHE-LICENSE
 
 %pom_disable_module integration
 %pom_disable_module osgi-over-slf4j
+%pom_disable_module slf4j-android
 %pom_remove_plugin :maven-source-plugin
 
 # Because of a non-ASCII comment in slf4j-api/src/main/java/org/slf4j/helpers/MessageFormatter.java
@@ -105,6 +106,9 @@ cp -p %{SOURCE1} APACHE-LICENSE
 # dos2unix
 %{_bindir}/find -name "*.css" -o -name "*.js" -o -name "*.txt" | \
     %{_bindir}/xargs -t %{__perl} -pi -e 's/\r$//g'
+
+# Remove wagon-ssh build extension
+%pom_xpath_remove pom:extensions
 
 # The general pattern is that the API package exports API classes and does
 # not require impl classes. slf4j was breaking that causing "A cycle was
@@ -141,6 +145,10 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %doc LICENSE.txt APACHE-LICENSE
 
 %changelog
+* Thu Mar  6 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.6-2
+- Remove wagon-ssh build extension
+- Disable slf4j-android module
+
 * Tue Mar 04 2014 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0:1.7.6-2
 - Use Requires: java-headless rebuild (#1067528)
 
