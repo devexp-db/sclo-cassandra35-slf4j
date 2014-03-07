@@ -172,11 +172,10 @@ sed -i "/Import-Package/s/.$/;resolution:=optional&/" slf4j-api/src/main/resourc
 %mvn_build -f -s
 
 %install
-%mvn_install
-
 # Compat symlinks
-(cd $RPM_BUILD_ROOT/%{_javadir}/%{name}; for jar in %{name}-*; do
-    ln -s $jar ${jar/%{name}-/}; done)
+%mvn_file ':%{name}-{*}' %{name}/%{name}-@1 %{name}/@1
+
+%mvn_install
 
 # manual
 install -d -m 0755 $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
@@ -185,7 +184,7 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 
 %files -f .mfiles
 %doc LICENSE.txt APACHE-LICENSE
-%{_javadir}/%{name}
+%dir %{_javadir}/%{name}
 
 %files jdk14 -f .mfiles-%{name}-jdk14
 %files log4j12 -f .mfiles-%{name}-log4j12
@@ -194,6 +193,7 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %files -n jcl-over-slf4j -f .mfiles-jcl-over-slf4j
 %files -n log4j-over-slf4j -f .mfiles-log4j-over-slf4j
 %files -n jul-to-slf4j -f .mfiles-jul-to-slf4j
+
 %files javadoc -f .mfiles-javadoc
 %doc LICENSE.txt APACHE-LICENSE
 
