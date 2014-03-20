@@ -158,7 +158,7 @@ cp -p %{SOURCE1} APACHE-LICENSE
 %pom_add_plugin :maven-resources-plugin slf4j-site "
     <configuration>
       <nonFilteredFileExtensions>
-        <nonFilteredFileExtension>jsx</nonFilteredFileExtension>
+        <nonFilteredFileExtension>js</nonFilteredFileExtension>
       </nonFilteredFileExtensions>
     </configuration>"
 
