@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.7.6
-Release:        4%{?dist}
+Release:        5%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -153,6 +153,15 @@ cp -p %{SOURCE1} APACHE-LICENSE
 # Remove wagon-ssh build extension
 %pom_xpath_remove pom:extensions
 
+# Disable filtering of bundled JavaScript binaries, which causes
+# maven-filtering to fail with IOException (see MSHARED-325).
+%pom_add_plugin :maven-resources-plugin slf4j-site "
+    <configuration>
+      <nonFilteredFileExtensions>
+        <nonFilteredFileExtension>jsx</nonFilteredFileExtension>
+      </nonFilteredFileExtensions>
+    </configuration>"
+
 # The general pattern is that the API package exports API classes and does
 # not require impl classes. slf4j was breaking that causing "A cycle was
 # detected when generating the classpath slf4j.api, slf4j.nop, slf4j.api."
@@ -201,6 +210,10 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %doc LICENSE.txt APACHE-LICENSE
 
 %changelog
+* Thu Mar 20 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.6-5
+- Disable filtering of bundled JavaScript binaries
+- Resolves: rhbz#1078536
+
 * Fri Mar 07 2014 Michael Simacek <msimacek@redhat.com> - 0:1.7.6-4
 - Merge api, simple and nop back into main package
 - Remove parent, migrator and site subpackages
