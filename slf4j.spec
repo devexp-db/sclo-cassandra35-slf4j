@@ -29,8 +29,8 @@
 #
 
 Name:           slf4j
-Version:        1.7.6
-Release:        5%{?dist}
+Version:        1.7.7
+Release:        1%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -210,6 +210,9 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %doc LICENSE.txt APACHE-LICENSE
 
 %changelog
+* Mon Apr 14 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.7-1
+- Update to upstream version 1.7.7
+
 * Thu Mar 20 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.6-5
 - Disable filtering of bundled JavaScript binaries
 - Resolves: rhbz#1078536
