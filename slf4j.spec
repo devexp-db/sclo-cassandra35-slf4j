@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.7.7
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -153,15 +153,6 @@ cp -p %{SOURCE1} APACHE-LICENSE
 # Remove wagon-ssh build extension
 %pom_xpath_remove pom:extensions
 
-# Disable filtering of bundled JavaScript binaries, which causes
-# maven-filtering to fail with IOException (see MSHARED-325).
-%pom_add_plugin :maven-resources-plugin slf4j-site "
-    <configuration>
-      <nonFilteredFileExtensions>
-        <nonFilteredFileExtension>js</nonFilteredFileExtension>
-      </nonFilteredFileExtensions>
-    </configuration>"
-
 # The general pattern is that the API package exports API classes and does
 # not require impl classes. slf4j was breaking that causing "A cycle was
 # detected when generating the classpath slf4j.api, slf4j.nop, slf4j.api."
@@ -210,6 +201,9 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %doc LICENSE.txt APACHE-LICENSE
 
 %changelog
+* Fri Oct 24 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.7-3
+- Remove workaround for MSHARED-325
+
 * Sun Jun 08 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.7.7-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
