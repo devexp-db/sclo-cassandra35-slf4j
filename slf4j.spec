@@ -29,8 +29,8 @@
 #
 
 Name:           slf4j
-Version:        1.7.7
-Release:        3%{?dist}
+Version:        1.7.10
+Release:        1%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -57,6 +57,7 @@ BuildRequires:  maven-plugin-build-helper
 BuildRequires:  log4j
 BuildRequires:  apache-commons-logging
 BuildRequires:  cal10n
+BuildRequires:  perl
 
 %description
 The Simple Logging Facade for Java or (SLF4J) is intended to serve
@@ -201,6 +202,9 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %doc LICENSE.txt APACHE-LICENSE
 
 %changelog
+* Mon Jan 19 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.10-1
+- Update to upstream version 1.7.10
+
 * Fri Oct 24 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.7-3
 - Remove workaround for MSHARED-325
 
