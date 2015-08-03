@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.7.12
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -200,8 +200,12 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 
 %files manual
 %doc LICENSE.txt APACHE-LICENSE
+%{_defaultdocdir}/%{name}-manual
 
 %changelog
+* Mon Aug 03 2015 Michael Simacek <msimacek@redhat.com> - 0:1.7.12-3
+- List manual files in %%files section
+
 * Fri Jun 19 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.7.12-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
