@@ -29,8 +29,8 @@
 #
 
 Name:           slf4j
-Version:        1.7.12
-Release:        3%{?dist}
+Version:        1.7.13
+Release:        1%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -203,6 +203,9 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %{_defaultdocdir}/%{name}-manual
 
 %changelog
+* Thu Nov 12 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.13-1
+- Update to upstream version 1.7.13
+
 * Mon Aug 03 2015 Michael Simacek <msimacek@redhat.com> - 0:1.7.12-3
 - List manual files in %%files section
 
