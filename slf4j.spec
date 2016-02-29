@@ -29,7 +29,7 @@
 #
 
 Name:           slf4j
-Version:        1.7.17
+Version:        1.7.18
 Release:        1%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
@@ -203,6 +203,9 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %{_defaultdocdir}/%{name}-manual
 
 %changelog
+* Mon Feb 29 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.18-1
+- Update to upstream version 1.7.18
+
 * Mon Feb 22 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.17-1
 - Update to upstream version 1.7.17
 
