@@ -30,7 +30,7 @@
 
 Name:           slf4j
 Version:        1.7.21
-Release:        1%{?dist}
+Release:        2%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -154,6 +154,14 @@ cp -p %{SOURCE1} APACHE-LICENSE
 # Remove wagon-ssh build extension
 %pom_xpath_remove pom:extensions
 
+# Disable default-jar execution of maven-jar-plugin, which is causing
+# problems with version 3.0.0 of the plugin.
+%pom_xpath_inject "pom:plugin[pom:artifactId='maven-jar-plugin']/pom:executions" "
+    <execution>
+      <id>default-jar</id>
+      <phase>skip</phase>
+    </execution>" slf4j-api
+
 # The general pattern is that the API package exports API classes and does
 # not require impl classes. slf4j was breaking that causing "A cycle was
 # detected when generating the classpath slf4j.api, slf4j.nop, slf4j.api."
@@ -203,6 +211,9 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 %{_defaultdocdir}/%{name}-manual
 
 %changelog
+* Tue May 31 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.21-2
+- Fix build issue with maven-jar-plugin 3.0.0
+
 * Wed Apr  6 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.21-1
 - Update to upstream version 1.7.21
 
