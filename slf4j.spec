@@ -1,3 +1,6 @@
+%{?scl:%scl_package slf4j}
+%{!?scl:%global pkg_name %{name}}
+
 # Copyright (c) 2000-2009, JPackage Project
 # All rights reserved.
 #
@@ -28,16 +31,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-Name:           slf4j
+Name:           %{?scl_prefix}slf4j
 Version:        1.7.21
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
 # the log4j-over-slf4j and jcl-over-slf4j submodules are ASL 2.0, rest is MIT
 License:        MIT and ASL 2.0
 URL:            http://www.slf4j.org/
-Source0:        http://www.slf4j.org/dist/%{name}-%{version}.tar.gz
+Source0:        http://www.%{pkg_name}.org/dist/%{pkg_name}-%{version}.tar.gz
 Source1:        http://www.apache.org/licenses/LICENSE-2.0.txt
 BuildArch:      noarch
 
@@ -58,6 +61,7 @@ BuildRequires:  log4j
 BuildRequires:  apache-commons-logging
 BuildRequires:  cal10n
 BuildRequires:  perl
+%{?scl:Requires: %scl_runtime}
 
 %description
 The Simple Logging Facade for Java or (SLF4J) is intended to serve
@@ -78,10 +82,10 @@ Summary:        API documentation for %{name}
 This package provides %{summary}.
 
 %package manual
-Summary:        Manual for %{name}
+Summary:        Manual for %{pkg_name}
 
 %description manual
-This package provides documentation for %{name}.
+This package provides documentation for %{pkg_name}.
 
 %package jdk14
 Summary:        SLF4J JDK14 Binding
@@ -101,39 +105,40 @@ Summary:        SLF4J JCL Binding
 %description jcl
 SLF4J JCL Binding.
 
-%package ext
+%{!?scl:%package ext
 Summary:        SLF4J Extensions Module
 
 %description ext
-Extensions to the SLF4J API.
+Extensions to the SLF4J API.}
 
-%package -n jcl-over-slf4j
+%package -n jcl-over-%{pkg_name}
 Summary:        JCL 1.1.1 implemented over SLF4J
 
-%description -n jcl-over-slf4j
+%description -n jcl-over-%{pkg_name}
 JCL 1.1.1 implemented over SLF4J.
 
-%package -n log4j-over-slf4j
+%package -n log4j-over-%{pkg_name}
 Summary:        Log4j implemented over SLF4J
 
-%description -n log4j-over-slf4j
+%description -n log4j-over-%{pkg_name}
 Log4j implemented over SLF4J.
 
-%package -n jul-to-slf4j
+%package -n jul-to-%{pkg_name}
 Summary:        JUL to SLF4J bridge
 
-%description -n jul-to-slf4j
+%description -n jul-to-%{pkg_name}
 JUL to SLF4J bridge.
 
 %prep
-%setup -q
+%{?scl_enable}
+%setup -q -n %{pkg_name}-%{version}
 find . -name "*.jar" | xargs rm
 cp -p %{SOURCE1} APACHE-LICENSE
 
 %pom_disable_module integration
-%pom_disable_module osgi-over-slf4j
-%pom_disable_module slf4j-android
-%pom_disable_module slf4j-migrator
+%pom_disable_module osgi-over-%{pkg_name}
+%pom_disable_module %{pkg_name}-android
+%pom_disable_module %{pkg_name}-migrator
 %pom_remove_plugin :maven-source-plugin
 
 # Because of a non-ASCII comment in slf4j-api/src/main/java/org/slf4j/helpers/MessageFormatter.java
@@ -171,46 +176,56 @@ cp -p %{SOURCE1} APACHE-LICENSE
 # Reported upstream: http://bugzilla.slf4j.org/show_bug.cgi?id=283
 sed -i "/Import-Package/s/.$/;resolution:=optional&/" slf4j-api/src/main/resources/META-INF/MANIFEST.MF
 
-%mvn_package :%{name}-parent __noinstall
-%mvn_package :%{name}-site __noinstall
-%mvn_package :%{name}-api
-%mvn_package :%{name}-simple
-%mvn_package :%{name}-nop
+# disable ext module in SCL package (not needed)
+%{?scl:%pom_disable_module %{pkg_name}-ext}
+
+%mvn_package :%{pkg_name}-parent __noinstall
+%mvn_package :%{pkg_name}-site __noinstall
+%mvn_package :%{pkg_name}-api
+%mvn_package :%{pkg_name}-simple
+%mvn_package :%{pkg_name}-nop
+%{?scl_disable}
 
 %build
+%{?scl_enable}
 %mvn_build -f -s
+%{?scl_disable}
 
 %install
+%{?scl_enable}
 # Compat symlinks
-%mvn_file ':%{name}-{*}' %{name}/%{name}-@1 %{name}/@1
+%mvn_file ':%{pkg_name}-{*}' %{pkg_name}/%{pkg_name}-@1 %{pkg_name}/@1
 
 %mvn_install
+%{?scl_disable}
 
 # manual
-install -d -m 0755 $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
+install -d -m 0755 $RPM_BUILD_ROOT%{_defaultdocdir}/%{pkg_name}-manual
 rm -rf target/site/{.htaccess,apidocs}
-cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
+cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{pkg_name}-manual
 
 %files -f .mfiles
 %doc LICENSE.txt APACHE-LICENSE
-%dir %{_javadir}/%{name}
 
-%files jdk14 -f .mfiles-%{name}-jdk14
-%files log4j12 -f .mfiles-%{name}-log4j12
-%files jcl -f .mfiles-%{name}-jcl
-%files ext -f .mfiles-%{name}-ext
-%files -n jcl-over-slf4j -f .mfiles-jcl-over-slf4j
-%files -n log4j-over-slf4j -f .mfiles-log4j-over-slf4j
-%files -n jul-to-slf4j -f .mfiles-jul-to-slf4j
+%files jdk14 -f .mfiles-%{pkg_name}-jdk14
+%files log4j12 -f .mfiles-%{pkg_name}-log4j12
+%files jcl -f .mfiles-%{pkg_name}-jcl
+%{!?scl:%files ext -f .mfiles-%{pkg_name}-ext}
+%files -n jcl-over-%{pkg_name} -f .mfiles-jcl-over-%{pkg_name}
+%files -n log4j-over-%{pkg_name} -f .mfiles-log4j-over-%{pkg_name}
+%files -n jul-to-%{pkg_name} -f .mfiles-jul-to-%{pkg_name}
 
 %files javadoc -f .mfiles-javadoc
 %doc LICENSE.txt APACHE-LICENSE
 
 %files manual
 %doc LICENSE.txt APACHE-LICENSE
-%{_defaultdocdir}/%{name}-manual
+%{_defaultdocdir}/%{pkg_name}-manual
 
 %changelog
+* Fri Sep 30 2016 Tomas Repik <trepik@redhat.com> - 0:1.7.21-3
+- scl conversion
+
 * Tue May 31 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7.21-2
 - Fix build issue with maven-jar-plugin 3.0.0
 
@@ -411,7 +426,7 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}-manual
 - Add -ext jar, depmap and pom
 - Save jcl104-over-slf4j as symlink
 
-* Tue Feb 18 2009 David Walluck <dwalluck@redhat.com> 0:1.5.6-1
+* Wed Feb 18 2009 David Walluck <dwalluck@redhat.com> 0:1.5.6-1
 - 1.5.6
 - add repolib
 - fix file eol
