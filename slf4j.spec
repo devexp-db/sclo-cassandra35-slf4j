@@ -33,7 +33,7 @@
 
 Name:           %{?scl_prefix}slf4j
 Version:        1.7.21
-Release:        3%{?dist}
+Release:        4%{?dist}
 Epoch:          0
 Summary:        Simple Logging Facade for Java
 Group:          Development/Libraries
@@ -44,23 +44,15 @@ Source0:        http://www.%{pkg_name}.org/dist/%{pkg_name}-%{version}.tar.gz
 Source1:        http://www.apache.org/licenses/LICENSE-2.0.txt
 BuildArch:      noarch
 
-BuildRequires:  jpackage-utils >= 0:1.7.5
-BuildRequires:  java-devel >= 0:1.5.0
-BuildRequires:  ant >= 0:1.6.5
-BuildRequires:  ant-junit >= 0:1.6.5
-BuildRequires:  javassist >= 0:3.4
-BuildRequires:  junit >= 0:3.8.2
-BuildRequires:  maven-local
-BuildRequires:  maven-antrun-plugin
-BuildRequires:  maven-resources-plugin
-BuildRequires:  maven-source-plugin
-BuildRequires:  maven-site-plugin
-BuildRequires:  maven-doxia-sitetools
-BuildRequires:  maven-plugin-build-helper
-BuildRequires:  log4j
-BuildRequires:  apache-commons-logging
-BuildRequires:  cal10n
+BuildRequires:  %{?scl_prefix_maven}maven-local
+BuildRequires:  %{?scl_prefix_maven}maven-plugin-build-helper
+BuildRequires:  %{?scl_prefix_maven}maven-antrun-plugin
 BuildRequires:  perl
+# test dependencies
+BuildRequires:	%{?scl_prefix_java_common}junit
+# dependencies of ext subpackage not needed in scl package
+%{!?scl:BuildRequires:  cal10n
+BuildRequires:  javassist >= 0:3.4}
 %{?scl:Requires: %scl_runtime}
 
 %description
@@ -130,11 +122,11 @@ Summary:        JUL to SLF4J bridge
 JUL to SLF4J bridge.
 
 %prep
-%{?scl_enable}
 %setup -q -n %{pkg_name}-%{version}
 find . -name "*.jar" | xargs rm
 cp -p %{SOURCE1} APACHE-LICENSE
 
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %pom_disable_module integration
 %pom_disable_module osgi-over-%{pkg_name}
 %pom_disable_module %{pkg_name}-android
@@ -184,20 +176,20 @@ sed -i "/Import-Package/s/.$/;resolution:=optional&/" slf4j-api/src/main/resourc
 %mvn_package :%{pkg_name}-api
 %mvn_package :%{pkg_name}-simple
 %mvn_package :%{pkg_name}-nop
-%{?scl_disable}
+%{?scl:EOF}
 
 %build
-%{?scl_enable}
-%mvn_build -f -s
-%{?scl_disable}
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
+%mvn_build -s
+%{?scl:EOF}
 
 %install
-%{?scl_enable}
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 # Compat symlinks
 %mvn_file ':%{pkg_name}-{*}' %{pkg_name}/%{pkg_name}-@1 %{pkg_name}/@1
 
 %mvn_install
-%{?scl_disable}
+%{?scl:EOF}
 
 # manual
 install -d -m 0755 $RPM_BUILD_ROOT%{_defaultdocdir}/%{pkg_name}-manual
@@ -223,6 +215,9 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{pkg_name}-manual
 %{_defaultdocdir}/%{pkg_name}-manual
 
 %changelog
+* Wed Oct 12 2016 Tomas Repik <trepik@redhat.com> - 0:1.7.21-4
+- use standard SCL macros
+
 * Fri Sep 30 2016 Tomas Repik <trepik@redhat.com> - 0:1.7.21-3
 - scl conversion
 
