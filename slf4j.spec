@@ -31,28 +31,27 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-Name:           %{?scl_prefix}slf4j
-Version:        1.7.21
-Release:        4%{?dist}
-Epoch:          0
-Summary:        Simple Logging Facade for Java
-Group:          Development/Libraries
+Name:		%{?scl_prefix}slf4j
+Version:	1.7.21
+Release:	5%{?dist}
+Epoch:		0
+Summary:	Simple Logging Facade for Java
+Group:		Development/Libraries
 # the log4j-over-slf4j and jcl-over-slf4j submodules are ASL 2.0, rest is MIT
-License:        MIT and ASL 2.0
-URL:            http://www.slf4j.org/
-Source0:        http://www.%{pkg_name}.org/dist/%{pkg_name}-%{version}.tar.gz
-Source1:        http://www.apache.org/licenses/LICENSE-2.0.txt
-BuildArch:      noarch
+License:	MIT and ASL 2.0
+URL:		http://www.slf4j.org/
+Source0:	http://www.%{pkg_name}.org/dist/%{pkg_name}-%{version}.tar.gz
+Source1:	http://www.apache.org/licenses/LICENSE-2.0.txt
+BuildArch:	noarch
 
-BuildRequires:  %{?scl_prefix_maven}maven-local
-BuildRequires:  %{?scl_prefix_maven}maven-plugin-build-helper
-BuildRequires:  %{?scl_prefix_maven}maven-antrun-plugin
-BuildRequires:  perl
+BuildRequires:	%{?scl_prefix_maven}maven-local
+BuildRequires:	%{?scl_prefix_maven}maven-plugin-build-helper
+BuildRequires:	%{?scl_prefix_maven}maven-antrun-plugin
+BuildRequires:	perl
 # test dependencies
 BuildRequires:	%{?scl_prefix_java_common}junit
-# dependencies of ext subpackage not needed in scl package
-%{!?scl:BuildRequires:  cal10n
-BuildRequires:  javassist >= 0:3.4}
+BuildRequires:  %{?scl_prefix_maven}cal10n
+BuildRequires:  %{?scl_prefix_java_common}javassist%{!?scl: >= 0:3.4}
 %{?scl:Requires: %scl_runtime}
 
 %description
@@ -68,57 +67,57 @@ it is possible (and rather easy) to write SLF4J adapters for the given
 API implementation, e.g. Log4jLoggerAdapter or JDK14LoggerAdapter..
 
 %package javadoc
-Summary:        API documentation for %{name}
+Summary:	API documentation for %{name}
 
 %description javadoc
 This package provides %{summary}.
 
 %package manual
-Summary:        Manual for %{pkg_name}
+Summary:	Manual for %{pkg_name}
 
 %description manual
 This package provides documentation for %{pkg_name}.
 
 %package jdk14
-Summary:        SLF4J JDK14 Binding
+Summary:	SLF4J JDK14 Binding
 
 %description jdk14
 SLF4J JDK14 Binding.
 
 %package log4j12
-Summary:        SLF4J LOG4J-12 Binding
+Summary:	SLF4J LOG4J-12 Binding
 
 %description log4j12
 SLF4J LOG4J-12 Binding.
 
 %package jcl
-Summary:        SLF4J JCL Binding
+Summary:	SLF4J JCL Binding
 
 %description jcl
 SLF4J JCL Binding.
 
-%{!?scl:%package ext
-Summary:        SLF4J Extensions Module
+%package ext
+Summary:	SLF4J Extensions Module
 
 %description ext
-Extensions to the SLF4J API.}
+Extensions to the SLF4J API.
 
-%package -n jcl-over-%{pkg_name}
-Summary:        JCL 1.1.1 implemented over SLF4J
+%package -n %{?scl_prefix}jcl-over-%{pkg_name}
+Summary:	JCL 1.1.1 implemented over SLF4J
 
-%description -n jcl-over-%{pkg_name}
+%description -n %{?scl_prefix}jcl-over-%{pkg_name}
 JCL 1.1.1 implemented over SLF4J.
 
-%package -n log4j-over-%{pkg_name}
-Summary:        Log4j implemented over SLF4J
+%package -n %{?scl_prefix}log4j-over-%{pkg_name}
+Summary:	Log4j implemented over SLF4J
 
-%description -n log4j-over-%{pkg_name}
+%description -n %{?scl_prefix}log4j-over-%{pkg_name}
 Log4j implemented over SLF4J.
 
-%package -n jul-to-%{pkg_name}
-Summary:        JUL to SLF4J bridge
+%package -n %{?scl_prefix}jul-to-%{pkg_name}
+Summary:	JUL to SLF4J bridge
 
-%description -n jul-to-%{pkg_name}
+%description -n %{?scl_prefix}jul-to-%{pkg_name}
 JUL to SLF4J bridge.
 
 %prep
@@ -168,9 +167,6 @@ cp -p %{SOURCE1} APACHE-LICENSE
 # Reported upstream: http://bugzilla.slf4j.org/show_bug.cgi?id=283
 sed -i "/Import-Package/s/.$/;resolution:=optional&/" slf4j-api/src/main/resources/META-INF/MANIFEST.MF
 
-# disable ext module in SCL package (not needed)
-%{?scl:%pom_disable_module %{pkg_name}-ext}
-
 %mvn_package :%{pkg_name}-parent __noinstall
 %mvn_package :%{pkg_name}-site __noinstall
 %mvn_package :%{pkg_name}-api
@@ -202,10 +198,10 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{pkg_name}-manual
 %files jdk14 -f .mfiles-%{pkg_name}-jdk14
 %files log4j12 -f .mfiles-%{pkg_name}-log4j12
 %files jcl -f .mfiles-%{pkg_name}-jcl
-%{!?scl:%files ext -f .mfiles-%{pkg_name}-ext}
-%files -n jcl-over-%{pkg_name} -f .mfiles-jcl-over-%{pkg_name}
-%files -n log4j-over-%{pkg_name} -f .mfiles-log4j-over-%{pkg_name}
-%files -n jul-to-%{pkg_name} -f .mfiles-jul-to-%{pkg_name}
+%files ext -f .mfiles-%{pkg_name}-ext
+%files -n %{?scl_prefix}jcl-over-%{pkg_name} -f .mfiles-jcl-over-%{pkg_name}
+%files -n %{?scl_prefix}log4j-over-%{pkg_name} -f .mfiles-log4j-over-%{pkg_name}
+%files -n %{?scl_prefix}jul-to-%{pkg_name} -f .mfiles-jul-to-%{pkg_name}
 
 %files javadoc -f .mfiles-javadoc
 %doc LICENSE.txt APACHE-LICENSE
@@ -215,6 +211,9 @@ cp -pr target/site/* $RPM_BUILD_ROOT%{_defaultdocdir}/%{pkg_name}-manual
 %{_defaultdocdir}/%{pkg_name}-manual
 
 %changelog
+* Thu Mar 09 2017 Tomas Repik <trepik@redhat.com> - 0:1.7.21-5
+- ext subpackage included
+
 * Wed Oct 12 2016 Tomas Repik <trepik@redhat.com> - 0:1.7.21-4
 - use standard SCL macros
 
